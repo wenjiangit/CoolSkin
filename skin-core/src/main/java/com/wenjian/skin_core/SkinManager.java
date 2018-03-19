@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.wenjian.skin_core.utils.SkinPreference;
 
 import java.lang.reflect.Method;
+import java.util.Observable;
 
 /**
  * @author mac
@@ -17,7 +18,7 @@ import java.lang.reflect.Method;
  * @date 2018/3/17
  */
 
-public class SkinManager {
+public class SkinManager extends Observable{
 
 
     private static SkinManager sInstance;
@@ -40,13 +41,16 @@ public class SkinManager {
 
     private SkinManager(Application application){
         this.mApplication = application;
-        application.registerActivityLifecycleCallbacks(new SkinActivityLifecycle());
         SkinPreference.init(application);
+        SkinResources.init(application);
+        application.registerActivityLifecycleCallbacks(new SkinActivityLifecycle());
+        loadSkin(SkinPreference.getInstance().getSkin());
     }
 
     public void loadSkin(String path){
         if (TextUtils.isEmpty(path)) {
             SkinPreference.getInstance().setSkin("");
+            SkinResources.getInstance().reset();
 
         } else {
             try {
@@ -54,7 +58,6 @@ public class SkinManager {
                 Method addAssetPath = AssetManager.class.getDeclaredMethod("addAssetPath", String.class);
                 addAssetPath.setAccessible(true);
                 addAssetPath.invoke(assetManager, path);
-
                 Resources appResource = mApplication.getResources();
                 Resources skinResource = new Resources(assetManager,
                         appResource.getDisplayMetrics(),
@@ -62,17 +65,15 @@ public class SkinManager {
                 PackageManager packageManager = mApplication.getPackageManager();
                 PackageInfo info = packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES);
                 SkinResources.getInstance().apply(skinResource,info.packageName);
-
-
+                SkinPreference.getInstance().setSkin(path);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-
-            SkinPreference.getInstance().setSkin(path);
-
-
-
+            //应用皮肤
+            setChanged();
+            //通知更新
+            notifyObservers();
 
         }
     }

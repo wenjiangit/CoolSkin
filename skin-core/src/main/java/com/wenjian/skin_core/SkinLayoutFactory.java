@@ -9,6 +9,8 @@ import android.view.View;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * @author mac
@@ -16,7 +18,7 @@ import java.util.HashMap;
  * @date 2018/3/17
  */
 
-public class SkinLayoutFactory implements LayoutInflater.Factory2 {
+public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
 
     static final Class<?>[] mConstructorSignature = new Class[]{
             Context.class, AttributeSet.class};
@@ -76,5 +78,10 @@ public class SkinLayoutFactory implements LayoutInflater.Factory2 {
 
         return null;
 
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        mSkinAttribute.applySkin();
     }
 }

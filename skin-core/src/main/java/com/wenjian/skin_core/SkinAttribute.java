@@ -1,5 +1,8 @@
 package com.wenjian.skin_core;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -68,12 +71,17 @@ public class SkinAttribute {
             if (!skinPairs.isEmpty()) {
                 SkinView skinView = new SkinView(view, skinPairs);
                 skinView.applySkin();
-
                 mSkinViews.add(skinView);
             }
 
         }
 
+    }
+
+    public void applySkin() {
+        for (SkinView skinView : mSkinViews) {
+            skinView.applySkin();
+        }
     }
 
 
@@ -101,6 +109,20 @@ public class SkinAttribute {
         }
 
         public void applySkin() {
+            for (SkinPair skinPair : skinPairs) {
+                switch (skinPair.attrName) {
+                    case "background":
+                        Object background = SkinResources.getInstance().getBackground(skinPair.resId);
+                        if (background instanceof Integer) {
+                            view.setBackgroundColor((Integer) background);
+                        } else {
+                            view.setBackgroundDrawable((Drawable) background);
+                        }
+                        break;
+                        default:
+                }
+            }
+
 
         }
     }

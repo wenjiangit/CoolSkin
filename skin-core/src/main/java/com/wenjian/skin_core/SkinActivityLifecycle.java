@@ -3,9 +3,11 @@ package com.wenjian.skin_core;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.view.LayoutInflater;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 /**
  * @author mac
@@ -14,6 +16,9 @@ import java.lang.reflect.Field;
  */
 
 public class SkinActivityLifecycle implements Application.ActivityLifecycleCallbacks{
+
+    HashMap<Activity, SkinLayoutFactory> mHashMap = new HashMap<>();
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
@@ -27,7 +32,13 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        SkinLayoutFactory factory = new SkinLayoutFactory();
+        LayoutInflaterCompat.setFactory2(layoutInflater, factory);
         layoutInflater.setFactory2(new SkinLayoutFactory());
+
+        SkinManager.getInstance().addObserver(factory);
+        mHashMap.put(activity, factory);
 
     }
 
@@ -59,5 +70,7 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
     @Override
     public void onActivityDestroyed(Activity activity) {
 
+        SkinLayoutFactory factory = mHashMap.remove(activity);
+        SkinManager.getInstance().deleteObserver(factory);
     }
 }
