@@ -21,15 +21,17 @@ import java.util.Observable;
 
 public class SkinManager extends Observable{
 
-    private static SkinManager sInstance;
+    private static volatile SkinManager sInstance;
 
     private Application mApplication;
 
 
     public static void init(Application application){
-        synchronized (SkinManager.class) {
-            if (sInstance == null) {
-                sInstance = new SkinManager(application);
+        if (sInstance == null) {
+            synchronized (SkinManager.class) {
+                if (sInstance == null) {
+                    sInstance = new SkinManager(application);
+                }
             }
         }
     }
