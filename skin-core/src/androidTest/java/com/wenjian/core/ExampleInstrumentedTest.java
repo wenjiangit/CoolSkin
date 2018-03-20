@@ -1,4 +1,4 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

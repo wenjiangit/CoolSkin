@@ -1,4 +1,4 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import org.junit.Test;
 

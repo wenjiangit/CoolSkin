@@ -1,4 +1,4 @@
-package com.wenjian.skin_core.utils;
+package com.wenjian.core.utils;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
  */
 
 public class SkinPreference {
-
 
     private static volatile SkinPreference sInstance;
 

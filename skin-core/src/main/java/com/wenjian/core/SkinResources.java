@@ -1,11 +1,10 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import android.app.Application;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 /**
@@ -153,6 +152,7 @@ public class SkinResources {
             typeface = Typeface.createFromAsset(mSkinResources.getAssets(), skinTypefacePath);
             return typeface;
         } catch (RuntimeException e) {
+            e.printStackTrace();
         }
         return Typeface.DEFAULT;
     }

@@ -1,9 +1,7 @@
-package com.wenjian.skin_core.utils;
+package com.wenjian.core.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-
-import org.w3c.dom.Attr;
 
 /**
  * @author mac

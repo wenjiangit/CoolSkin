@@ -1,13 +1,11 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -28,7 +26,13 @@ public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
 
     private SkinAttribute mSkinAttribute;
 
-    public SkinLayoutFactory(){
+    private static final String [] PKG_PREFIX = {
+            "android.view.",
+            "android.widget.",
+            "android.webkit."
+    };
+
+    SkinLayoutFactory(){
         this.mSkinAttribute = new SkinAttribute();
     }
 
@@ -37,13 +41,15 @@ public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
 
         View view = null;
-        if (!name.contains(".")) {
-            view = onCreateView(name, context, attrs);
-        } else {
+        if (name.contains(".")) {
             view = createView(name,context,attrs);
+        } else {
+            view = onCreateView(name, context, attrs);
         }
 
-        mSkinAttribute.load(view,attrs);
+        if (view != null) {
+            mSkinAttribute.load(view,attrs);
+        }
 
         return view;
 
@@ -51,7 +57,16 @@ public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return createView("android.view." + name, context, attrs);
+        View view = null;
+
+        for (String pkgPrefix : PKG_PREFIX) {
+            view = createView(pkgPrefix + name, context, attrs);
+            if (view != null) {
+                break;
+            }
+        }
+
+        return view;
     }
 
     private View createView(String fullName, Context context, AttributeSet attrs) {
@@ -64,15 +79,13 @@ public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
                 sConstructorMap.put(fullName,constructor);
 
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 
         if (constructor != null) {
             try {
-                constructor.newInstance(context, attrs);
+                return constructor.newInstance(context, attrs);
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
 

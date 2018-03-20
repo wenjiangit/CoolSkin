@@ -1,12 +1,11 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
-import com.wenjian.skin_core.utils.SkinThemeUtils;
+import com.wenjian.core.utils.SkinThemeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,32 +16,32 @@ import java.util.List;
  * @date 2018/3/17
  */
 
-public class SkinAttribute {
+class SkinAttribute {
+    private static final String TAG = "SkinAttribute";
 
-    private static final List<String> VIEW_ATTRS = new ArrayList<>();
+    private static List<String> sViewAttrs = new ArrayList<>();
 
     static {
-        VIEW_ATTRS.add("background");
-        VIEW_ATTRS.add("src");
-        VIEW_ATTRS.add("textColor");
-        VIEW_ATTRS.add("srcCompact");
-        VIEW_ATTRS.add("drawableLeft");
-        VIEW_ATTRS.add("drawableRight");
-        VIEW_ATTRS.add("drawableTop");
-        VIEW_ATTRS.add("drawableBottom");
-
+        sViewAttrs.add("background");
+        sViewAttrs.add("src");
+        sViewAttrs.add("textColor");
+        sViewAttrs.add("srcCompact");
+        sViewAttrs.add("drawableLeft");
+        sViewAttrs.add("drawableRight");
+        sViewAttrs.add("drawableTop");
+        sViewAttrs.add("drawableBottom");
     }
 
     private List<SkinView> mSkinViews = new ArrayList<>();
 
-    public void load(View view, AttributeSet attrs) {
+    void load(View view, AttributeSet attrs) {
 
         List<SkinPair> skinPairs = new ArrayList<>();
 
         for (int i = 0; i < attrs.getAttributeCount(); i++) {
             String attributeName = attrs.getAttributeName(i);
 
-            if (VIEW_ATTRS.contains(attributeName)) {
+            if (sViewAttrs.contains(attributeName)) {
                 String attributeValue = attrs.getAttributeValue(i);
                 //比如写死颜色值#ffffff，则跳过，不处理
                 if (attributeValue.startsWith("#")){
@@ -73,12 +72,13 @@ public class SkinAttribute {
                 skinView.applySkin();
                 mSkinViews.add(skinView);
             }
-
         }
+
+        Log.d(TAG, "mSkinViews: " + mSkinViews);
 
     }
 
-    public void applySkin() {
+     void applySkin() {
         for (SkinView skinView : mSkinViews) {
             skinView.applySkin();
         }
@@ -90,9 +90,17 @@ public class SkinAttribute {
 
         int resId;
 
-        public SkinPair(String attrName, int resId) {
+        SkinPair(String attrName, int resId) {
             this.attrName = attrName;
             this.resId = resId;
+        }
+
+        @Override
+        public String toString() {
+            return "SkinPair{" +
+                    "attrName='" + attrName + '\'' +
+                    ", resId=" + resId +
+                    '}';
         }
     }
 
@@ -103,12 +111,12 @@ public class SkinAttribute {
 
         List<SkinPair> skinPairs;
 
-        public SkinView(View view, List<SkinPair> skinPairs) {
+        SkinView(View view, List<SkinPair> skinPairs) {
             this.view = view;
             this.skinPairs = skinPairs;
         }
 
-        public void applySkin() {
+        void applySkin() {
             for (SkinPair skinPair : skinPairs) {
                 switch (skinPair.attrName) {
                     case "background":
@@ -122,8 +130,14 @@ public class SkinAttribute {
                         default:
                 }
             }
+        }
 
-
+        @Override
+        public String toString() {
+            return "SkinView{" +
+                    "view=" + view +
+                    ", skinPairs=" + skinPairs +
+                    '}';
         }
     }
 

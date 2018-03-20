@@ -1,5 +1,6 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -7,7 +8,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
-import com.wenjian.skin_core.utils.SkinPreference;
+import com.wenjian.core.utils.SkinPreference;
 
 import java.lang.reflect.Method;
 import java.util.Observable;
@@ -19,7 +20,6 @@ import java.util.Observable;
  */
 
 public class SkinManager extends Observable{
-
 
     private static SkinManager sInstance;
 
@@ -47,6 +47,7 @@ public class SkinManager extends Observable{
         loadSkin(SkinPreference.getInstance().getSkin());
     }
 
+    @SuppressLint("PrivateApi")
     public void loadSkin(String path){
         if (TextUtils.isEmpty(path)) {
             SkinPreference.getInstance().setSkin("");
@@ -74,7 +75,6 @@ public class SkinManager extends Observable{
             setChanged();
             //通知更新
             notifyObservers();
-
         }
     }
 

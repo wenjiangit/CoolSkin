@@ -1,4 +1,4 @@
-package com.wenjian.skin_core;
+package com.wenjian.core;
 
 import android.app.Activity;
 import android.app.Application;
@@ -15,9 +15,9 @@ import java.util.HashMap;
  * @date 2018/3/17
  */
 
-public class SkinActivityLifecycle implements Application.ActivityLifecycleCallbacks{
+public class SkinActivityLifecycle implements Application.ActivityLifecycleCallbacks {
 
-    HashMap<Activity, SkinLayoutFactory> mHashMap = new HashMap<>();
+    private HashMap<Activity, SkinLayoutFactory> mFactoryMap = new HashMap<>();
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
         try {
             Field field = LayoutInflater.class.getDeclaredField("mFactorySet");
             field.setAccessible(true);
-            field.set(layoutInflater,false);
+            field.set(layoutInflater, false);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -35,11 +35,9 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
 
         SkinLayoutFactory factory = new SkinLayoutFactory();
         LayoutInflaterCompat.setFactory2(layoutInflater, factory);
-        layoutInflater.setFactory2(new SkinLayoutFactory());
 
         SkinManager.getInstance().addObserver(factory);
-        mHashMap.put(activity, factory);
-
+        mFactoryMap.put(activity, factory);
     }
 
     @Override
@@ -69,8 +67,7 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
-        SkinLayoutFactory factory = mHashMap.remove(activity);
+        SkinLayoutFactory factory = mFactoryMap.remove(activity);
         SkinManager.getInstance().deleteObserver(factory);
     }
 }
