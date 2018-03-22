@@ -1,9 +1,14 @@
 package com.wenjian.core;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.wenjian.core.utils.SkinThemeUtils;
 
@@ -44,7 +49,7 @@ class SkinAttribute {
             if (sViewAttrs.contains(attributeName)) {
                 String attributeValue = attrs.getAttributeValue(i);
                 //比如写死颜色值#ffffff，则跳过，不处理
-                if (attributeValue.startsWith("#")){
+                if (attributeValue.startsWith("#")) {
                     continue;
                 }
 
@@ -78,14 +83,14 @@ class SkinAttribute {
 
     }
 
-     void applySkin() {
+    void applySkin() {
         for (SkinView skinView : mSkinViews) {
             skinView.applySkin();
         }
     }
 
 
-    static class SkinPair{
+    static class SkinPair {
         String attrName;
 
         int resId;
@@ -105,7 +110,7 @@ class SkinAttribute {
     }
 
 
-    static class SkinView{
+    static class SkinView {
 
         View view;
 
@@ -118,18 +123,55 @@ class SkinAttribute {
 
         void applySkin() {
             for (SkinPair skinPair : skinPairs) {
+                Drawable left = null, right = null, top = null, bottom = null;
                 switch (skinPair.attrName) {
                     case "background":
                         Object background = SkinResources.getInstance().getBackground(skinPair.resId);
                         if (background instanceof Integer) {
                             view.setBackgroundColor((Integer) background);
                         } else {
-                            view.setBackgroundDrawable((Drawable) background);
+                            ViewCompat.setBackground(view, (Drawable) background);
                         }
                         break;
-                        default:
+                    case "src":
+                    case "srcCompact":
+                        Object src = SkinResources.getInstance().getBackground(skinPair.resId);
+                        if (src instanceof Integer) {
+                            ((ImageView) view).setImageDrawable(new ColorDrawable((Integer) src));
+                        } else {
+                            ((ImageView) view).setImageDrawable((Drawable) src);
+                        }
+                        break;
+                    case "textColor":
+                        ColorStateList colorStateList = SkinResources.getInstance().getColorStateList(skinPair.resId);
+                        ((TextView) view).setTextColor(colorStateList);
+                        break;
+
+                    case "drawableLeft":
+                        left = SkinResources.getInstance().getDrawable(skinPair.resId);
+                        break;
+
+                    case "drawableRight":
+                        right = SkinResources.getInstance().getDrawable(skinPair.resId);
+                        break;
+
+                    case "drawableTop":
+                        top = SkinResources.getInstance().getDrawable(skinPair.resId);
+                        break;
+
+                    case "drawableBottom":
+                        bottom = SkinResources.getInstance().getDrawable(skinPair.resId);
+                        break;
+                    default:
                 }
+
+                if (left != null || right != null || top != null || bottom != null) {
+                    ((TextView) view).setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
+                }
+
             }
+
+
         }
 
         @Override
