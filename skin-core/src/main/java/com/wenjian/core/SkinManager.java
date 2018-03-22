@@ -52,9 +52,9 @@ public class SkinManager extends Observable{
     @SuppressLint("PrivateApi")
     public void loadSkin(String path){
         if (TextUtils.isEmpty(path)) {
+            //还原为默认值
             SkinPreference.getInstance().setSkin("");
             SkinResources.getInstance().reset();
-
         } else {
             try {
                 AssetManager assetManager = AssetManager.class.newInstance();
@@ -65,19 +65,19 @@ public class SkinManager extends Observable{
                 Resources skinResource = new Resources(assetManager,
                         appResource.getDisplayMetrics(),
                         appResource.getConfiguration());
-                PackageManager packageManager = mApplication.getPackageManager();
-                PackageInfo info = packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES);
+                PackageManager pm = mApplication.getPackageManager();
+                PackageInfo info = pm.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES);
                 SkinResources.getInstance().apply(skinResource,info.packageName);
                 SkinPreference.getInstance().setSkin(path);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            //应用皮肤
-            setChanged();
-            //通知更新
-            notifyObservers();
         }
+
+        //应用皮肤
+        setChanged();
+        //通知更新
+        notifyObservers();
     }
 
 

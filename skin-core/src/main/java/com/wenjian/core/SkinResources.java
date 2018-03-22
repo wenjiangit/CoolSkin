@@ -100,7 +100,7 @@ public class SkinResources {
      */
     public Object getBackground(int resId) {
         String typeName = mAppResources.getResourceTypeName(resId);
-        if (typeName.equals("color")) {
+        if ("color".equals(typeName)) {
             return getColor(resId);
         } else {
             return getDrawable(resId);

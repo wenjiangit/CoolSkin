@@ -18,7 +18,7 @@ import java.util.Observer;
 
 public class SkinLayoutFactory implements LayoutInflater.Factory2 ,Observer{
 
-    static final Class<?>[] mConstructorSignature = new Class[]{
+    private static final Class<?>[] mConstructorSignature = new Class[]{
             Context.class, AttributeSet.class};
 
     private static final HashMap<String, Constructor<? extends View>> sConstructorMap =
