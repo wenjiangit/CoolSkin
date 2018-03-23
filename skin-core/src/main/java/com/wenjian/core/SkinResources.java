@@ -29,7 +29,7 @@ public class SkinResources {
         this.mAppResources = application.getResources();
     }
 
-    public static void init(Application application){
+    public static void init(Application application) {
         if (sInstance == null) {
             synchronized (SkinResources.class) {
                 if (sInstance == null) {
@@ -94,7 +94,6 @@ public class SkinResources {
     }
 
     /**
-     *
      * @param resId
      * @return
      */
@@ -156,9 +155,6 @@ public class SkinResources {
         }
         return Typeface.DEFAULT;
     }
-
-
-
 
 
 }

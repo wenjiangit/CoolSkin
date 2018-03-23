@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.view.LayoutInflater;
 
+import com.wenjian.core.utils.SkinThemeUtils;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * @author mac
@@ -17,10 +21,13 @@ import java.util.HashMap;
 
 public class SkinActivityLifecycle implements Application.ActivityLifecycleCallbacks {
 
-    private HashMap<Activity, SkinLayoutFactory> mFactoryMap = new HashMap<>();
+    private Map<Activity, SkinLayoutFactory> mFactoryMap = new WeakHashMap<>();
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+        SkinThemeUtils.updateStatusBarColor(activity);
+
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
 
         try {
@@ -33,7 +40,7 @@ public class SkinActivityLifecycle implements Application.ActivityLifecycleCallb
             e.printStackTrace();
         }
 
-        SkinLayoutFactory factory = new SkinLayoutFactory();
+        SkinLayoutFactory factory = new SkinLayoutFactory(activity);
         LayoutInflaterCompat.setFactory2(layoutInflater, factory);
 
         SkinManager.getInstance().addObserver(factory);

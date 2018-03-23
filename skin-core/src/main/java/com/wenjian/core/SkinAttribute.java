@@ -1,6 +1,7 @@
 package com.wenjian.core;
 
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
@@ -25,6 +26,11 @@ class SkinAttribute {
     private static final String TAG = "SkinAttribute";
 
     private static List<String> sViewAttrs = new ArrayList<>();
+
+    private Typeface mTypeface;
+
+    SkinAttribute() {
+    }
 
     static {
         sViewAttrs.add("background");
@@ -59,7 +65,7 @@ class SkinAttribute {
 
                     int attrId = Integer.valueOf(attributeValue.substring(1));
 
-                    resId = SkinThemeUtils.getResIds(view.getContext(), new int[]{attrId})[0];
+                    resId = SkinThemeUtils.getResIdByAttrId(view.getContext(), new int[]{attrId})[0];
 
                 } else {
                     resId = Integer.valueOf(attributeValue.substring(1));
@@ -72,9 +78,10 @@ class SkinAttribute {
 
             }
 
-            if (!skinPairs.isEmpty()) {
+            //收集view,包含特定属性,或者是TextView,用来更换字体
+            if (!skinPairs.isEmpty() || view instanceof TextView) {
                 SkinView skinView = new SkinView(view, skinPairs);
-                skinView.applySkin();
+                skinView.applySkin(mTypeface);
                 mSkinViews.add(skinView);
             }
         }
@@ -85,8 +92,12 @@ class SkinAttribute {
 
     void applySkin() {
         for (SkinView skinView : mSkinViews) {
-            skinView.applySkin();
+            skinView.applySkin(mTypeface);
         }
+    }
+
+    void setTypeface(Typeface typeface) {
+        mTypeface = typeface;
     }
 
 
@@ -121,7 +132,8 @@ class SkinAttribute {
             this.skinPairs = skinPairs;
         }
 
-        void applySkin() {
+        void applySkin(Typeface typeface) {
+            applyTypeface(typeface);
             for (SkinPair skinPair : skinPairs) {
                 Drawable left = null, right = null, top = null, bottom = null;
                 switch (skinPair.attrName) {
@@ -168,10 +180,16 @@ class SkinAttribute {
                 if (left != null || right != null || top != null || bottom != null) {
                     ((TextView) view).setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
                 }
-
             }
 
 
+        }
+
+
+        private void applyTypeface(Typeface typeface) {
+            if (view instanceof TextView) {
+                ((TextView)view).setTypeface(typeface);
+            }
         }
 
         @Override
